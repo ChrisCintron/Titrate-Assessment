@@ -16,6 +16,7 @@ class EntryScreen:
     my_choice_time = int()
     my_candy_time = int()
     my_reverse = int()
+    num_of_trials = int()
 
     def __init__(self, master):
         master.title("Gideon's Behavioral Experiment: Titrating Task")
@@ -26,6 +27,9 @@ class EntryScreen:
 
         self.frame1 = tk.Frame(master)
         self.frame1.pack(fill="both", expand=True)
+
+        self.number_of_trials_label = tk.Label(self.frame1, text="Number of Trials")
+        self.number_of_trials_Entry = tk.Entry(self.frame1)
 
         self.time_label = tk.Label(self.frame1, text="Initial time for neutral Button")
         self.time_Entry = tk.Entry(self.frame1)
@@ -45,6 +49,8 @@ class EntryScreen:
         print("Entry Screen Completed, Ready to run.")
 
     def packall(self):
+        self.number_of_trials_label.pack()
+        self.number_of_trials_Entry.pack()
         self.time_label.pack()
         self.time_Entry.pack()
         self.choice_time_label.pack()
@@ -56,6 +62,7 @@ class EntryScreen:
 
     def entry_get(self):
         EntryScreen.my_time = int(self.time_Entry.get())
+        EntryScreen.num_of_trials = int(self.number_of_trials_Entry.get())
         EntryScreen.my_choice_time = int(self.choice_time_entry.get())
         EntryScreen.my_candy_time = int(self.candy_time_entry.get())
         EntryScreen.my_reverse = int(self.Reverse_the_Trial_Entry.get())
@@ -114,6 +121,7 @@ class App:
         self.trainings_completed = 0
 
         print("App Completed, Ready to run.")
+        self.number_of_trials = EntryScreen.num_of_trials
         self.TrialNumber = 0
         self.count = 0 #Change to 4 to skip training, 0 for normal.
         self.object1_count = str()
@@ -122,6 +130,8 @@ class App:
 
     def start_trial(self):
         self.TrialNumber += 1
+        if self.TrialNumber > self.number_of_trials:
+            self.master.destroy()
         print("")
         print("_____________________")
         print("Trial({}) is starting".format(self.TrialNumber))
