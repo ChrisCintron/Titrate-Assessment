@@ -17,6 +17,7 @@ class EntryScreen(object):
     the_start_num = int()
     the_end_num = int()
     the_steps_num = int()
+    num_of_trials = int()
 
     def __init__(self, master):
 
@@ -27,16 +28,18 @@ class EntryScreen(object):
         self.frame1 = tk.Frame(master)
         self.frame1.pack(fill="both", expand=True)
 
-
+        #EntryBox Labels
         self.symbol_label = tk.Label(self.frame1, text="My Symbol")
-        self.total_time_for_each_trial_label = tk.Label(self.frame1, text="Total Time for Trial: ")
+        self.number_of_trials_label = tk.Label(self.frame1, text="Number of Trials")
+        self.total_time_for_each_trial_label = tk.Label(self.frame1, text="Total Time for Trial ")
         self.Reverse_the_Trial = tk.Label(self.frame1, text="Reverse the Trial? 1 for No, 2 for Yes")
-        #schedule_range = tk.Label(self.frame1, text="Schedule Range. 'Starting,Ending,Steps'")
-        self.start_label = tk.Label(self.frame1, text="Start number.")
+        self.start_label = tk.Label(self.frame1, text="Start number")
         self.end_label = tk.Label(self.frame1, text="End number(non-inclusive) ")
         self.steps_label = tk.Label(self.frame1, text="Steps")
 
+        #EntryBox boxes
         self.symbol_label_Entry = tk.Entry(self.frame1)
+        self.number_of_trials_Entry = tk.Entry(self.frame1)
         self.total_time_Entry = tk.Entry(self.frame1)
         self.Reverse_the_Trial_Entry = tk.Entry(self.frame1)
         self.start_num = tk.Entry(self.frame1)
@@ -52,6 +55,8 @@ class EntryScreen(object):
     def packall(self):
         self.symbol_label.pack()
         self.symbol_label_Entry.pack()
+        self.number_of_trials_label.pack()
+        self.number_of_trials_Entry.pack()
         self.total_time_for_each_trial_label.pack()
         self.total_time_Entry.pack()
         self.Reverse_the_Trial.pack()
@@ -71,6 +76,7 @@ class EntryScreen(object):
         EntryScreen.the_start_num = int(self.start_num.get())
         EntryScreen.the_end_num = int(self.end_num.get())
         EntryScreen.the_steps_num = int(self.steps_num.get())
+        EntryScreen.num_of_trials = int(self.number_of_trials_Entry.get())
 
         print("My char: {}".format(self.my_char))
         print("My total time for each trial: {}".format(self.total_time_for_each_trial))
@@ -107,6 +113,7 @@ class App(EntryScreen):
         self.my_string2 = self.char * 1
         self.one_symbol = tk.StringVar()
         self.one_symbol.set(self.my_string2)
+        self.number_of_trials = EntryScreen.num_of_trials
         self.total_time_for_each_trial = EntryScreen.total_time_for_each_trial
         self.switch = 1
         self.TrialNumber = 1
@@ -246,11 +253,23 @@ class App(EntryScreen):
 
     def normalize(self):
         #End Actions
+
+        """
         self.randomnumber() #set count = random number
         self.blackout() #turn screen white, uses change side to re-pack
         self.change_sides() #choose random side to pack, re-bind buttons
         self.my_end_info()
         self.xlx_results()
+        """
+
+        #Updated1.20.17#
+        #self.results is the FR SCHEDULE, not self.count#
+        self.xlx_results()
+        self.randomnumber() #set count = random number
+        self.blackout() #turn screen white, uses change side to re-pack
+        self.change_sides() #choose random side to pack, re-bind buttons
+        self.my_end_info()
+        #self.xlx_results()
 
         #Start Actions
         self.TrialNumber += 1
@@ -323,7 +342,10 @@ class App(EntryScreen):
         self.master.update()
 
     def my_TrialNum(self):
+        if self.TrialNumber > self.number_of_trials:
+            self.master.destroy()
         print("___Trial #{}___".format(self.TrialNumber))
+
 
 
     def my_start_info(self):
@@ -389,7 +411,7 @@ class App(EntryScreen):
         i = self.TrialNumber
         self.ws.write(i, 0, "Trial({}): {}".format(self.TrialNumber,self.object1_file))
         self.ws.write(i, 1, int(self.total_time_for_each_trial))
-        self.ws.write(i, 2, self.count) #FR SCHEDULE
+        self.ws.write(i, 2, self.results) #FR SCHEDULE
         self.ws.write(i, 3, self.object1_count)
         self.ws.write(i, 4, self.object2_count)
 
@@ -397,6 +419,10 @@ class App(EntryScreen):
             self.ws.write(i, 5, self.object2_file)
         else:
             self.ws.write(i, 5, self.object1_file)
+
+
+
+
 
 
     def xlx_save(self):
